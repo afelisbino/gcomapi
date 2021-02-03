@@ -23,14 +23,14 @@ class Database extends Config
 	 *
 	 * @var string
 	 */
-	public $defaultGroup = 'default';
+	public $defaultGroup = 'production';
 
 	/**
 	 * The default database connection.
 	 *
 	 * @var array
 	 */
-	public $default = [
+	public $production = [
 		'DSN'      => '',
 		'hostname' => 'localhost',
 		'username' => '',
@@ -49,6 +49,7 @@ class Database extends Config
 		'failover' => [],
 		'port'     => 3306,
 	];
+	
 
 	/**
 	 * This database connection is used when
