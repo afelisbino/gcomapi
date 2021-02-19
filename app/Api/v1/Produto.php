@@ -2,27 +2,59 @@
 
 namespace App\Api\v1;
 
+use App\Models\CategoriaModel;
+use App\Models\FornecedorModel;
 use App\Models\ProdutoModel;
 use CodeIgniter\RESTful\ResourceController;
 
 class Produto extends ResourceController{
 
     private $produto;
+    private $categoria;
+    private $fornecedor;
+
     protected $format = 'json';
 
     public function __construct(){
+        helper('functions_helpers');
+
         $this->produto = new ProdutoModel();
+        $this->fornecedor = new FornecedorModel();
+        $this->categoria = new CategoriaModel();
     }
 
     public function index(){
         $ret = $this->produto->findAll();
 
-        if(empty($ret)){
-            return $this->respond(['msg' => 'Nenhum produto cadastrado!', 'status' => false], 200, 'Ok');
+        $resp = array(
+            'data' => array(),
+            'recordsTotal' => count($ret),
+            'recordsFiltered' => count($ret),
+        );
+
+        $l = 0;
+
+        if(!empty($ret)){
+
+            foreach($ret as $obj){
+                $opc = "<button class='btn btn-primary' onclick='buscarProduto({$obj['pro_id']})' title='Editar produto'><span class='fas fa-edit'></span></button>";
+                $opc .= "<button class='btn btn-danger' onclick='deletarProduto({$obj['pro_id']})' title='Excluir produto'><span class='fas fa-eraser'></span></button>";
+
+                $categoria = $this->categoria->find($obj['cat_id']);
+                $fornecedor = $this->fornecedor->find($obj['frn_id']);
+
+                $resp['data'][$l][] = $opc;
+                $resp['data'][$l][] = $obj['pro_codigo'];
+                $resp['data'][$l][] = $obj['pro_nome'];
+                $resp['data'][$l][] = numeroMoeda($obj['pro_valor_venda'], true);
+                $resp['data'][$l][] = $categoria['cat_nome'];
+                $resp['data'][$l][] = $fornecedor['frn_nome'];
+
+                $l++;
+            }
         }
-        else{
-            return $this->respond($ret, 200, 'Sucesso');
-        }
+
+        return $this->respond($resp, 200, 'Sucesso');
     }
 
     public function newProduct(){
@@ -45,6 +77,8 @@ class Produto extends ResourceController{
         }
         else{
 
+            $dados['pro_valor_venda'] = numeroFloat($dados['pro_valor_venda']);
+
             $ret = $this->produto->saveProduct($dados);
             
             if($ret['status'] == true){
@@ -61,6 +95,9 @@ class Produto extends ResourceController{
 
         if(!isset($dados['pro_id']) || empty($dados['pro_id'])){
             return $this->respond(['msg' => 'Produto não encotrado', 'status' => false], 200, "Não encontrado");
+        }
+        else if(!isset($dados['pro_codigo']) || empty($dados['pro_codigo'])){
+            return $this->respond(['msg' => 'Codigo de barras não informado', 'status' => false], 200, "Não informado");
         }
         else if(!isset($dados['pro_nome']) || empty($dados['pro_nome'])){
             return $this->respond(['msg' => 'Nome não informado', 'status' => false], 200, "Não informado");

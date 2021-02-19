@@ -20,12 +20,28 @@ class Categoria extends ResourceController
     {
         $ret = $this->categoria->findAll();
 
-        if(empty($ret)){
-            return $this->respond(['msg' => 'Nenhuma categoria cadastrado!', 'status' => false], 200, 'Ok');
+        $resp = array(
+            'data' => array(),
+            'recordsTotal' => count($ret),
+            'recordsFiltered' => count($ret),
+        );
+
+        $l = 0;
+
+        if(!empty($ret)){
+            foreach($ret as $obj){
+                $opc = "<button class='btn btn-primary' onclick='buscarCategoria({$obj['cat_id']})' title='Editar categoria'><span class='fas fa-edit'></span></button>";
+                $opc .= "<button class='btn btn-danger' onclick='deletarCategoria({$obj['cat_id']})' title='Excluir categoria'><span class='fas fa-eraser'></span></button>";
+    
+                $resp['data'][$l][] = $opc;
+                $resp['data'][$l][] = $obj['cat_nome'];
+    
+                $l++;
+            }    
         }
-        else{
-            return $this->respond($ret, 200, 'Sucesso');
-        }
+
+        return $this->respond($resp, 200, 'Sucesso');
+    
     }
 
     public function deleteCategory()
@@ -104,5 +120,11 @@ class Categoria extends ResourceController
                 return $this->respond($ret, 200, "Sucesso");
             }
         }
+    }
+
+    public function listCategory(){
+        $ret = $this->categoria->findAll();
+
+        return $this->respond($ret, 200, "Ok");
     }
 }

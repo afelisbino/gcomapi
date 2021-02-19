@@ -24,7 +24,7 @@ class ProdutoModel extends Model
         return $this->select('*')
             ->join('categoria', 'categoria.cat_id = produto.cat_id')
             ->join('fornecedor', 'fornecedor.frn_id = produto.frn_id')
-            ->where($where)->get()->getResultArray();
+            ->where($where)->get()->getRow();
     }
 
     public function saveProduct($dados){

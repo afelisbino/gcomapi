@@ -19,26 +19,31 @@ class Fornecedor extends ResourceController
     }
 
     public function index(){
-        $resp = $this->fornecedor->findProvider();
+        $ret = $this->fornecedor->findAll();
 
-        if(empty($resp)){
-            return $this->respond(['msg' => 'Nenhum fornecedor cadastrado!', 'status' => false], 200, 'Ok');
-        }
-        else{
-            $ret = [];
-            $i = 0;
+        $resp = array(
+            'data' => array(),
+            'recordsTotal' => count($ret),
+            'recordsFiltered' => count($ret),
+        );
 
-            foreach($resp as $obj){
+        $l = 0;
 
-                $ret[$i]['frn_doc'] = mascaraDocumento($obj->frn_doc);
-                $ret[$i]['frn_nome'] = $obj->frn_nome;
-                $ret[$i]['frn_id'] = $obj->frn_id;
+        if(!empty($ret)){
+            foreach($ret as $obj){
 
-                $i++;
+                $opc = "<button class='btn btn-primary' onclick='buscarFornecedor({$obj['frn_id']})' title='Editar fornecedor'><span class='fas fa-edit'></span></button>";
+                $opc .= "<button class='btn btn-danger' onclick='deletarFornecedor({$obj['frn_id']})' title='Excluir fornecedor'><span class='fas fa-eraser'></span></button>";
+    
+                $resp['data'][$l][] = $opc;
+                $resp['data'][$l][] = $obj['frn_nome'];
+                $resp['data'][$l][] = mascaraDocumento($obj['frn_doc']);
+                
+                $l++;
             }
-
-            return $this->respond($ret, 200, 'Sucesso');
         }
+
+        return $this->respond($resp, 200, 'Sucesso');
         
     }
 
@@ -134,19 +139,7 @@ class Fornecedor extends ResourceController
                 return $this->respond(['msg' => 'Fornecedor não encontrado', 'status' => false], 200, "OK");
             }
             else{
-                $ret = [];
-                $i = 0;
-
-                foreach($resp as $obj){
-
-                    $ret[$i]['frn_doc'] = mascaraDocumento($obj->frn_doc);
-                    $ret[$i]['frn_nome'] = $obj->frn_nome;
-                    $ret[$i]['frn_id'] = $obj->frn_id;
-
-                    $i++;
-                }
-
-                return $this->respond($ret, 200, 'Sucesso');
+                return $this->respond($resp, 200, 'Sucesso');
             }
         }
         else if(!empty($dados['frn_id']) || isset($dados['frn_id'])){
@@ -156,23 +149,17 @@ class Fornecedor extends ResourceController
                 return $this->respond(['msg' => 'Fornecedor não encontrado', 'status' => false], 200, "OK");
             }
             else{
-                $ret = [];
-                $i = 0;
-
-                foreach($resp as $obj){
-
-                    $ret[$i]['frn_doc'] = mascaraDocumento($obj->frn_doc);
-                    $ret[$i]['frn_nome'] = $obj->frn_nome;
-                    $ret[$i]['frn_id'] = $obj->frn_id;
-
-                    $i++;
-                }
-
-                return $this->respond($ret, 200, 'Sucesso');
+                return $this->respond($resp, 200, 'Sucesso');
             }
         }
         else{
             return $this->respond(['msg' => 'Fornecedor não informado', 'status' => false], 200, 'Ok');
         }
+    }
+
+    public function listProvider(){
+        $ret = $this->fornecedor->findAll();
+
+        return $this->respond($ret, 200, "Ok");
     }
 }

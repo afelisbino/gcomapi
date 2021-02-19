@@ -45,6 +45,7 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->delete('delete', 'Categoria::deleteCategory');
 		$routes->put('update', 'Categoria::updateCategory');
 		$routes->get('find', 'Categoria::searchCategory');
+		$routes->get('list_all', 'Categoria::listCategory');
 	});
 
 	$routes->group('provider', function($routes){
@@ -53,6 +54,7 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->delete('delete', 'Fornecedor::deleteProvider');
 		$routes->put('update', 'Fornecedor::updateProvider');
 		$routes->get('find', 'Fornecedor::searchProvider');
+		$routes->get('list_all', 'Fornecedor::listProvider');
 	});
 
 	$routes->group('product', function($routes){
