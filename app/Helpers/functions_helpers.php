@@ -1,4 +1,24 @@
 <?php
+if (!function_exists('numeroFloat')){
+
+    function numeroFloat( $valor ) {
+	    $valor = str_replace('.', '', $valor);
+	    $valor = str_replace(',', '.', $valor);
+	    $valor = str_replace('R$', '', $valor);
+	    return $valor;
+	}
+}
+
+if(!function_exists('numeroMoeda')){
+    function numeroMoeda($number, $prefixo=true){
+		$formatter = new NumberFormatter('pt_BR', NumberFormatter::CURRENCY);
+		if ($prefixo==false){
+        	$formatter->setSymbol(NumberFormatter::CURRENCY_SYMBOL, '');
+        }			
+		return $formatter->formatCurrency($number, 'BRL');
+	}
+}
+
 if (!function_exists('valid_email')) {
     /**
      * Validate email address
