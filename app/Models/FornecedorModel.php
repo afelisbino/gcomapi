@@ -72,6 +72,6 @@ class FornecedorModel extends Model{
     }
 
     public function findProvider($where = array()){
-        return $this->where($where)->get()->getResult();
+        return $this->where($where)->get()->getRow();
     }
 }

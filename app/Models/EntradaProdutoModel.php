@@ -16,4 +16,14 @@ class EntradaProdutoModel extends Model
         'epr_vlr_prod_total',
         'frn_id'
     ];
+
+    public function newInputNf($dados){
+
+        if($this->save($dados)){
+            return array('msg' => "Entrada registrada com sucesso", 'status' => true, 'epr_id' => $this->getInsertID());
+        }
+        else{
+            return array('msg' => "Não foi possivel registrar entrada, tente mais tarde", 'status' => false);
+        }
+    }
 }
