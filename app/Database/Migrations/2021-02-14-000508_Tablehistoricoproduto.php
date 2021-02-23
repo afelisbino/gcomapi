@@ -9,34 +9,55 @@ class Tablehistoricoproduto extends Migration
 	public function up()
 	{
 		$this->forge->addField([
-			'hpr_id' => [
+			'hsp_id' => [
 				'type' => 'int',
 				'null' => false,
 				'auto_increment' => true,
 			],
-			'hrp_msg' => [
+			'hsp_msg' => [
 				'type' => 'varchar',
 				'constraint' => 100,
 				'null' => false,
 			],
-			'hpr_data_historico' => [
+			'hsp_data' => [
 				'type' => 'datetime',
 				'null' => false
 			],
-			'pro_id' => [
+			'hsp_origem_registro' => [
+				'type' => 'varchar',
+				'constraint' => 45,
+				'null' => false
+			],
+			'hsp_tipo' => [
+				'type' => 'enum',
+				'constraint' => ['entrada', 'saida'],
+				'null' => false,
+				'default' => 'saida'
+			],
+			'hsp_qtd_registro' => [
+				'type' => 'int',
+				'null' => false,
+				'default' => 0
+			],
+			'hsp_qtd_antigo' => [
+				'type' => 'int',
+				'null' => false,
+				'default' => 0
+			],
+			'est_id' => [
 				'type' => 'int',
 				'null' => false
 			]
 		]);
 
-		$this->forge->addPrimaryKey('hpr_id');
-		$this->forge->addForeignKey('pro_id', 'produto', 'pro_id', 'cascade', 'cascade');
+		$this->forge->addPrimaryKey('hsp_id');
+		$this->forge->addForeignKey('est_id', 'estoque', 'est_id', 'cascade', 'cascade');
 
-		$this->forge->createTable('historico_produto', true, ['engine' => 'InnoDB']);
+		$this->forge->createTable('historico_saida_produto', true, ['engine' => 'InnoDB']);
 	}
 
 	public function down()
 	{
-		$this->forge->dropTable('historico_produto', true, true);
+		$this->forge->dropTable('historico_saida_produto', true, true);
 	}
 }
