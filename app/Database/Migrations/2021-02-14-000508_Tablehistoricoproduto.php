@@ -44,6 +44,11 @@ class Tablehistoricoproduto extends Migration
 				'null' => false,
 				'default' => 0
 			],
+			'hsp_qtd_atual' => [
+				'type' => 'int',
+				'null' => false,
+				'default' => 0
+			],
 			'est_id' => [
 				'type' => 'int',
 				'null' => false
