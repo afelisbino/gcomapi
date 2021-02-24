@@ -19,6 +19,33 @@ if(!function_exists('numeroMoeda')){
 	}
 }
 
+if(!function_exists('getDataBR')){
+    function getDataBR($data){
+		$dataAux = explode(' ', $data);
+		if (count($dataAux)==1){
+			return implode("/",array_reverse(explode("-",$dataAux[0])));
+		}
+		elseif (count($dataAux)==2) {
+			return (implode("/",array_reverse(explode("-",$dataAux[0])))).' '.$dataAux[1];
+		}
+		return $data;
+	}
+}
+
+if(!function_exists('getDataMysql')){
+    function getDataMysql($data){
+		$dataAux = explode(' ', $data);
+		if (count($dataAux)==1){
+			return implode("-",array_reverse(explode("/",$dataAux[0])));
+		}
+		elseif (count($dataAux)==2) {
+			return (implode("-",array_reverse(explode("/",$dataAux[0])))).' '.$dataAux[1];
+		}
+		return $data;
+		// return implode("-",array_reverse(explode("/",$data)));
+	}
+}
+
 if (!function_exists('valid_email')) {
     /**
      * Validate email address

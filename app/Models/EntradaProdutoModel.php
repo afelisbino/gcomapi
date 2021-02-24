@@ -17,13 +17,8 @@ class EntradaProdutoModel extends Model
         'frn_id'
     ];
 
-    public function newInputNf($dados){
-
-        if($this->save($dados)){
-            return array('msg' => "Entrada registrada com sucesso", 'status' => true, 'epr_id' => $this->getInsertID());
-        }
-        else{
-            return array('msg' => "Não foi possivel registrar entrada, tente mais tarde", 'status' => false);
-        }
+    public function findAllInput(){
+        return $this->join('fornecedor', 'fornecedor.frn_id = entrada_produto.frn_id')->get()->getResultArray();
     }
+
 }

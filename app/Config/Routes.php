@@ -23,8 +23,8 @@ $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 /*
-  *TRUE para funcionar sem configurar a rota e FALSE para obrigar a configuração da rota
-  */
+*TRUE para funcionar sem configurar a rota e FALSE para obrigar a configuração da rota
+*/
 $routes->setAutoRoute(false);
 
 
@@ -72,7 +72,18 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->get('list', 'Estoque::index');
 		$routes->get('find', 'Estoque::searchStore');
 		$routes->post('new', 'Estoque::newStore');
-		$routes->put('update', 'Estoque::updateStore');
+		$routes->put('update', 'Estoque::updateStoreMin');
+		$routes->group('history', function($routes){
+			$routes->get('list', 'Estoque::listStoreHistory');
+		});
+		$routes->put('output', 'Estoque::outputProduct');
+		$routes->put('input', 'Estoque::inputProduct');
+	});
+
+	$routes->group('nf', function($routes){
+		$routes->get('list', 'EntradaNotaFiscal::index');
+		$routes->post('new', 'EntradaNotaFiscal::newNf');
+		$routes->get('find', 'EntradaNotaFiscal::viewInputDetail');
 	});
 });
 
