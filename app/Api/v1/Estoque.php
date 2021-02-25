@@ -33,7 +33,7 @@ class Estoque extends ResourceController{
         if(!empty($ret)){
             foreach($ret as $obj){
                 $opc = "<button class='btn btn-primary' onclick='buscarEstoque({$obj['pro_id']})' title='Editar estoque'><span class='fas fa-edit'></span></button>";
-                $opc .= "<button class='btn btn-secondary' onclick='registrarSaida({$obj['pro_id']})' title='Registrar saida'><span class='fas fa-external-link-alt'></span></button>";
+                $opc .= "<button class='btn btn-danger' onclick='registrarSaida({$obj['pro_id']})' title='Registrar saida'><span class='fas fa-minus-circle'></span></button>";
                 
                 $resp['data'][$l][] = $opc;
                 $resp['data'][$l][] = $obj['pro_codigo'];
