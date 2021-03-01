@@ -19,11 +19,17 @@ class CaixaModel extends Model{
         return $this->where($where)->get()->getRow();
     }
 
-    public function getTotalCash($where){
+    public function getTotalCashOpen($cxa_id){
         $this->select("sum(rgv_vlr_total) as total_caixa, cxa_status, cxa_data_abertura, cxa_data_fechamento");
-        $this->join("registro_venda", "registro_venda.cxa_id = caixa.cxa_id");
-        $this->where($where);
-        $this->orderBy('caixa.cxa_id', 'DESC');
+        $this->join("registro_venda", "registro_venda.cxa_id = caixa.cxa_id", 'left');
+        $this->where('caixa.cxa_id', $cxa_id);
+
+        return $this->get()->getRow();
+    }
+
+    public function getTotalCashClose(){
+        $this->where(['cxa_status' => 'fechado']);
+        $this->orderBy("cxa_id", "DESC");
         $this->limit(1);
 
         return $this->get()->getRow();
