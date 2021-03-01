@@ -85,6 +85,25 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->post('new', 'EntradaNotaFiscal::newNf');
 		$routes->get('find', 'EntradaNotaFiscal::viewInputDetail');
 	});
+
+	$routes->group('sale', function($routes){
+		$routes->get('list', 'Venda::index');
+		$routes->get('find', 'Venda::findDetailSale');
+		$routes->post('new', 'Venda::newSale');
+		$routes->group('view', function($routes){
+			$routes->get('today', 'Venda::totalSaleToday');
+		});
+	});
+
+	$routes->group('cash', function($routes){
+		$routes->get('list', 'Caixa::index');
+		$routes->post('open', 'Caixa::open');
+		$routes->put('close', 'Caixa::close');
+		$routes->group('view', function($routes){
+			$routes->get('now', 'Caixa::totalCashOpen');
+			$routes->get('last', 'Caixa::totalCashLast');
+		});
+	});
 });
 
 /*

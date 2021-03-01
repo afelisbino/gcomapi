@@ -15,4 +15,8 @@ class SaidaProdutoModel extends Model
         'pro_id',
         'rgv_id'
     ];
+
+    public function getItemSale($rgv_id){
+        return $this->join('produto', 'produto.pro_id = saida_produto.pro_id', 'left')->where(['rgv_id' => $rgv_id])->get()->getResultArray();
+    }
 }

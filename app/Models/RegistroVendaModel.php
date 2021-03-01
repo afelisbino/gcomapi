@@ -13,6 +13,13 @@ class RegistroVendaModel extends Model
         'rgv_data',
         'rgv_vlr_total',
         'rgv_forma_pag',
-        'rgv_status'
+        'rgv_status',
+        'cxa_id'
     ];
+
+    public function getTotalSalesValue($where){
+        $this->select("sum(rgv_vlr_total) as total_venda, count(rgv_id) as qtd_venda");
+        $this->where($where);
+        return $this->get()->getRow();
+    }
 }
