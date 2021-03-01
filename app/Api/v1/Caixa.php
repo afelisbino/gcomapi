@@ -34,7 +34,7 @@ class Caixa extends ResourceController{
             foreach($ret as $obj){
                 
                 $resp['data'][$l][] = getDataBR($obj['cxa_data_abertura']);
-                $resp['data'][$l][] = getDataBR($obj['cxa_data_fechado']);
+                $resp['data'][$l][] = getDataBR($obj['cxa_data_fechamento']);
                 $resp['data'][$l][] = numeroMoeda($obj['cxa_total_fechamento']);
                 $resp['data'][$l][] = $obj['cxa_status'];
 
@@ -65,9 +65,7 @@ class Caixa extends ResourceController{
     }
 
     public function close(){
-        $dados = $this->request->getRawInput();
-        
-        $caixa = $this->caixa->getCash(['cxa_id' => $dados['cxa_id']]);
+        $caixa = $this->caixa->getCash(['cxa_status' => 'aberto']);
 
         if(empty($caixa) || $caixa->cxa_status !== 'aberto'){
             return $this->respond(['status' => false, 'msg' => 'Não possui caixa aberto atualmente'], 200, "Ok");
@@ -75,11 +73,11 @@ class Caixa extends ResourceController{
 
         $this->venda = new RegistroVendaModel();
 
-        $venda = $this->venda->getTotalSalesValue(['cxa_id' => $dados['cxa_id']]);
+        $venda = $this->venda->getTotalSalesValue(['cxa_id' => $caixa->cxa_id]);
 
         $update['cxa_data_fechamento'] = date('Y-m-d H:i:s');
         $update['cxa_total_fechamento'] = !empty($venda->total_venda) ? $venda->total_venda : 0.00;
-        $update['cxa_id'] = $dados['cxa_id'];
+        $update['cxa_id'] = $caixa->cxa_id;
         $update['cxa_status'] = 'fechado';
 
         if($this->caixa->save($update)){
@@ -90,33 +88,28 @@ class Caixa extends ResourceController{
         }
     }
 
-    public function totalCashOpen(){
-        $ret = $this->caixa->getTotalCash(['cxa_status' => 'aberto']);
+    public function statusCaixa(){
+        $status = $this->caixa->getCash(['cxa_status' => 'aberto']);
 
-        if(!empty($ret)){
+        $resp = [];
+
+        if(!empty($status)){
+            $ret = $this->caixa->getTotalCashOpen($status->cxa_id);
+
+            $resp['cxa_status'] = ucfirst($ret->cxa_status);
             $resp['cxa_data_abertura'] = getDataBR($ret->cxa_data_abertura);
             $resp['cxa_data_fechamento'] = empty($ret->cxa_data_fechamento) ? null : getDataBR($ret->cxa_data_fechamento);
-            $resp['total_caixa'] = numeroMoeda($ret->total_caixa);
-
-            return $this->respond($resp, 200, "Sucesso");
+            $resp['total_caixa'] = empty($ret->total_caixa) ? numeroMoeda(0.00) : numeroMoeda($ret->total_caixa);
         }
         else{
-            return $this->respond(['status' => false, 'msg' => "Informação não encontrado"], 200, "Ok");
-        }
-    }
-
-    public function totalCashLast(){
-        $ret = $this->caixa->getTotalCash(['cxa_status' => 'fechado']);
-
-        if(!empty($ret)){
+            $ret = $this->caixa->getTotalCashClose();
+            
+            $resp['cxa_status'] = ucfirst($ret->cxa_status);
             $resp['cxa_data_abertura'] = getDataBR($ret->cxa_data_abertura);
             $resp['cxa_data_fechamento'] = empty($ret->cxa_data_fechamento) ? null : getDataBR($ret->cxa_data_fechamento);
-            $resp['total_caixa'] = numeroMoeda($ret->total_caixa);
+            $resp['total_caixa'] = numeroMoeda($ret->cxa_total_fechamento);
+        }
 
-            return $this->respond($resp, 200, "Sucesso");
-        }
-        else{
-            return $this->respond(['status' => false, 'msg' => "Informação não encontrado"], 200, "Ok");
-        }
+        return $this->respond($resp, 200, "Sucesso");
     }
 }
