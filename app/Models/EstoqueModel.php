@@ -34,7 +34,7 @@ class EstoqueModel extends Model
 
         $estoque = $this->findStorage(['estoque.pro_id' => $pro_id]);
 
-        if(!empty($estoque)){
+        if(!empty($estoque) && $estoque->est_qtd_atual >= $qtd_saida){
 
             $update['est_qtd_atual'] = ($estoque->est_qtd_atual - $qtd_saida);
             $update['est_id'] = $estoque->est_id;
