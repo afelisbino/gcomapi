@@ -78,4 +78,10 @@ class EstoqueModel extends Model
             return ['status' => false, 'msg' => 'Erro ao registrar a movimentação'];
         }
     }
+
+    public function getMinimumStore(){
+        $this->join('produto', 'produto.pro_id = estoque.pro_id', 'left');
+        $this->where('est_qtd_atual <= est_qtd_minimo');
+        return $this->get()->getResultArray();
+    }
 }

@@ -204,4 +204,15 @@ class Estoque extends ResourceController{
 
         return $this->respond($resp, 200, "Sucesso");
     }
+
+    public function listMinimumStock(){
+        $ret = $this->estoque->getMinimumStore();
+
+        if(!empty($ret)){
+            return $this->respond($ret, 200, "Sucesso");
+        }
+        else{
+            return $this->respond(['status' => false, 'msg' => "Nenhum produto abaixo do estoque minimo"]);
+        }
+    }
 }

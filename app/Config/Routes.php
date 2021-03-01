@@ -78,6 +78,7 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		});
 		$routes->put('output', 'Estoque::outputProduct');
 		$routes->put('input', 'Estoque::inputProduct');
+		$routes->get('minimum', 'Estoque::listMinimumStock');
 	});
 
 	$routes->group('nf', function($routes){
@@ -100,8 +101,7 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->post('open', 'Caixa::open');
 		$routes->put('close', 'Caixa::close');
 		$routes->group('view', function($routes){
-			$routes->get('now', 'Caixa::totalCashOpen');
-			$routes->get('last', 'Caixa::totalCashLast');
+			$routes->get('status', 'Caixa::statusCaixa');
 		});
 	});
 });
