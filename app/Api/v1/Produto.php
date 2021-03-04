@@ -45,10 +45,10 @@ class Produto extends ResourceController{
 
                 $resp['data'][$l][] = $opc;
                 $resp['data'][$l][] = $obj['pro_codigo'];
-                $resp['data'][$l][] = $obj['pro_nome'];
+                $resp['data'][$l][] = ucfirst($obj['pro_nome']);
                 $resp['data'][$l][] = numeroMoeda($obj['pro_valor_venda'], true);
-                $resp['data'][$l][] = $categoria['cat_nome'];
-                $resp['data'][$l][] = $fornecedor['frn_nome'];
+                $resp['data'][$l][] = ucfirst($categoria['cat_nome']);
+                $resp['data'][$l][] = ucfirst($fornecedor['frn_nome']);
 
                 $l++;
             }

@@ -46,7 +46,7 @@ class EntradaNotaFiscal extends ResourceController{
                 $resp['data'][$l][] = $obj['epr_nfs_numero'];
                 $resp['data'][$l][] = numeroMoeda($obj['epr_vlr_nota']);
                 $resp['data'][$l][] = numeroMoeda($obj['epr_vlr_prod_total']);
-                $resp['data'][$l][] = $obj['frn_nome'];
+                $resp['data'][$l][] = ucfirst($obj['frn_nome']);
 
                 $l++;
             }
@@ -117,7 +117,7 @@ class EntradaNotaFiscal extends ResourceController{
         if(!empty($ret)){
             foreach($ret as $obj){
                 $resp['data'][$l][] = $obj['pro_codigo'];
-                $resp['data'][$l][] = $obj['pro_nome'];
+                $resp['data'][$l][] = ucfirst($obj['pro_nome']);
                 $resp['data'][$l][] = $obj['epd_qtd_entrada'];
                 $resp['data'][$l][] = numeroMoeda($obj['epd_vlr_compra']);
                 $resp['data'][$l][] = numeroMoeda(($obj['epd_vlr_compra'] * $obj['epd_qtd_entrada']));

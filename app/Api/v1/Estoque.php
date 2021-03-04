@@ -37,7 +37,7 @@ class Estoque extends ResourceController{
                 
                 $resp['data'][$l][] = $opc;
                 $resp['data'][$l][] = $obj['pro_codigo'];
-                $resp['data'][$l][] = $obj['pro_nome'];
+                $resp['data'][$l][] = ucfirst($obj['pro_nome']);
                 $resp['data'][$l][] = $obj['est_qtd_atual'];
                 $resp['data'][$l][] = $obj['est_qtd_minimo'];
     
@@ -190,7 +190,7 @@ class Estoque extends ResourceController{
             foreach($ret as $obj){
                 
                 $resp['data'][$l][] = getDataBR($obj['hsp_data']);
-                $resp['data'][$l][] = $obj['pro_nome'];
+                $resp['data'][$l][] = ucfirst($obj['pro_nome']);
                 $resp['data'][$l][] = $obj['hsp_msg'];
                 $resp['data'][$l][] = $obj['hsp_qtd_antigo'];
                 $resp['data'][$l][] = $obj['hsp_qtd_registro'];

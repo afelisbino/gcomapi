@@ -34,7 +34,7 @@ class Categoria extends ResourceController
                 $opc .= "<button class='btn btn-danger' onclick='deletarCategoria({$obj['cat_id']})' title='Excluir categoria'><span class='fas fa-eraser'></span></button>";
     
                 $resp['data'][$l][] = $opc;
-                $resp['data'][$l][] = $obj['cat_nome'];
+                $resp['data'][$l][] = ucfirst($obj['cat_nome']);
     
                 $l++;
             }    
