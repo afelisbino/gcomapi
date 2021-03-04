@@ -46,7 +46,7 @@ class EntradaNotaFiscal extends ResourceController{
                 $resp['data'][$l][] = $obj['epr_nfs_numero'];
                 $resp['data'][$l][] = numeroMoeda($obj['epr_vlr_nota']);
                 $resp['data'][$l][] = numeroMoeda($obj['epr_vlr_prod_total']);
-                $resp['data'][$l][] = $obj['frn_nome'];
+                $resp['data'][$l][] = ucfirst($obj['frn_nome']);
 
                 $l++;
             }
@@ -60,15 +60,11 @@ class EntradaNotaFiscal extends ResourceController{
 
         $this->estoque = new EstoqueModel();
         $this->produto = new ProdutoModel();
-        $this->fornecedor = new FornecedorModel();
         
         $nf['epr_nfs_numero'] = $dados->epr_nfs_numero;
         $nf['epr_vlr_nota'] = numeroFloat($dados->epr_vlr_nota);
         $nf['epr_data_cadastro'] =  date('Y-m-d H:i:s');
-
-        $fornecedor = $this->fornecedor->findProvider(['frn_doc' => $dados->frn_doc]);
-
-        $nf['frn_id'] = $fornecedor->frn_id;
+        $nf['frn_id'] = $dados->frn_id;
 
         $this->entrada_produto->save($nf);
 
@@ -77,7 +73,7 @@ class EntradaNotaFiscal extends ResourceController{
 
         foreach($dados->produtos as $obj){
 
-            $produto = $this->produto->findProduct(['pro_codigo' => $obj->pro_codigo, 'produto.frn_id' => $fornecedor->frn_id]);
+            $produto = $this->produto->findProduct(['pro_codigo' => $obj->pro_codigo]);
 
             if(!empty($produto)){
                 $nfp['epr_id'] = $epr_id;
@@ -121,7 +117,7 @@ class EntradaNotaFiscal extends ResourceController{
         if(!empty($ret)){
             foreach($ret as $obj){
                 $resp['data'][$l][] = $obj['pro_codigo'];
-                $resp['data'][$l][] = $obj['pro_nome'];
+                $resp['data'][$l][] = ucfirst($obj['pro_nome']);
                 $resp['data'][$l][] = $obj['epd_qtd_entrada'];
                 $resp['data'][$l][] = numeroMoeda($obj['epd_vlr_compra']);
                 $resp['data'][$l][] = numeroMoeda(($obj['epd_vlr_compra'] * $obj['epd_qtd_entrada']));

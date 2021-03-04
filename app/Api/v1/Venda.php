@@ -72,7 +72,7 @@ class Venda extends ResourceController{
         if(!empty($ret)){
             foreach($ret as $obj){
 
-                $resp['data'][$l][] = $obj['pro_nome'];
+                $resp['data'][$l][] = ucfirst($obj['pro_nome']);
                 $resp['data'][$l][] = $obj['spr_qtd'];
                 $resp['data'][$l][] = numeroMoeda($obj['spr_sub_total']);
 

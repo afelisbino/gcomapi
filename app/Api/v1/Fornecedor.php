@@ -36,7 +36,7 @@ class Fornecedor extends ResourceController
                 $opc .= "<button class='btn btn-danger' onclick='deletarFornecedor({$obj['frn_id']})' title='Excluir fornecedor'><span class='fas fa-eraser'></span></button>";
     
                 $resp['data'][$l][] = $opc;
-                $resp['data'][$l][] = $obj['frn_nome'];
+                $resp['data'][$l][] = ucfirst($obj['frn_nome']);
                 $resp['data'][$l][] = mascaraDocumento($obj['frn_doc']);
                 
                 $l++;
