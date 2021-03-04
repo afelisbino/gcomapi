@@ -60,15 +60,11 @@ class EntradaNotaFiscal extends ResourceController{
 
         $this->estoque = new EstoqueModel();
         $this->produto = new ProdutoModel();
-        $this->fornecedor = new FornecedorModel();
         
         $nf['epr_nfs_numero'] = $dados->epr_nfs_numero;
         $nf['epr_vlr_nota'] = numeroFloat($dados->epr_vlr_nota);
         $nf['epr_data_cadastro'] =  date('Y-m-d H:i:s');
-
-        $fornecedor = $this->fornecedor->findProvider(['frn_doc' => $dados->frn_doc]);
-
-        $nf['frn_id'] = $fornecedor->frn_id;
+        $nf['frn_id'] = $dados->frn_id;
 
         $this->entrada_produto->save($nf);
 
@@ -77,7 +73,7 @@ class EntradaNotaFiscal extends ResourceController{
 
         foreach($dados->produtos as $obj){
 
-            $produto = $this->produto->findProduct(['pro_codigo' => $obj->pro_codigo, 'produto.frn_id' => $fornecedor->frn_id]);
+            $produto = $this->produto->findProduct(['pro_codigo' => $obj->pro_codigo]);
 
             if(!empty($produto)){
                 $nfp['epr_id'] = $epr_id;
