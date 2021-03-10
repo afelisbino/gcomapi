@@ -97,10 +97,19 @@ class Venda extends ResourceController{
 
         $insertSale['cxa_id'] = $caixa->cxa_id;
         $insertSale['rgv_data'] = date('Y-m-d H:i:s');
-        $insertSale['rgv_status'] = 'finalizado';
         $insertSale['rgv_forma_pag'] = $dados->rgv_forma_pag;
         $insertSale['rgv_vlr_total'] = $dados->rgv_vlr_total;
 
+        if(!$dados->rgv_fiado){
+            $insertSale['rgv_status'] = 'finalizado';
+            $insertSale['rgv_fiado'] = 0;
+        }
+        else{
+            $insertSale['rgv_status'] = 'aberto';
+            $insertSale['rgv_fiado'] = 1;
+            $insertSale['cli_id'] = $dados->cli_id;
+        }
+        
         if(!$this->venda->save($insertSale)){
             return $this->respond(['status' => false, 'msg' => "Falha ao salvar a compra, entre em contato com o desenvolvedor!"], 200, "Ok");
         }
@@ -130,6 +139,36 @@ class Venda extends ResourceController{
         }
         else{
             return $this->respond(['status' => false, 'msg' => 'Nenhuma venda registrada hoje'], 200, "Ok");
+        }
+    }
+
+    public function payPayments(){
+        $dados = $this->request->getRawInput();
+
+        $this->caixa = new CaixaModel();
+
+        $caixa = $this->caixa->getCash(['cxa_status' => 'aberto']);
+
+        if(empty($caixa)){
+            return $this->respond(['status' => false, 'msg' => "Caixa se encontra fechado!"], 202, "Ok");
+        }
+
+        $fiado = $this->venda->find($dados['rgv_id']);
+
+        if($fiado['rgv_status'] === 'aberto'){
+            $update['rgv_id'] = $dados['rgv_id'];
+            $update['rgv_status'] = 'finalizado';
+            $update['cxa_id'] = $caixa->cxa_id;
+
+            if($this->venda->save($update)){
+                return $this->respondUpdated(['status' => true, 'msg' => "Venda paga com sucesso"]);
+            }
+            else{
+                return $this->respond(['status' => false, 'msg' => "Erro ao finalizar venda"], 202, "Ok");
+            }
+        }
+        else{
+            return $this->respond(['status' => false, 'msg' => "Venda já se encontra finalizado"], 202, "Ok");
         }
     }
 }
