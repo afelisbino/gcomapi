@@ -101,11 +101,15 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->get('list', 'Caixa::index');
 		$routes->post('open', 'Caixa::open');
 		$routes->put('close', 'Caixa::close');
+		$routes->get('detail', 'Caixa::detailCashToday');
 		$routes->group('view', function($routes){
 			$routes->get('status', 'Caixa::statusCaixa');
 		});
-		$routes->post('input', 'Caixa::inputCash');
-		$routes->post('output', 'Caixa::outputCash');
+		$routes->group('history', function($routes){
+			$routes->post('input', 'Caixa::inputCash');
+			$routes->post('output', 'Caixa::outputCash');
+			$routes->get('view', 'Caixa::historicCashHandling');
+		});		
 	});
 
 	$routes->group('client', function($routes){
