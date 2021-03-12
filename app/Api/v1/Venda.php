@@ -25,7 +25,14 @@ class Venda extends ResourceController{
     }
 
     public function index(){
-        $ret = $this->venda->findAll();
+        $dados = $this->request->getGet();
+
+        if(!empty($dados['rgv_data_inicio']) || !empty($dados['rgv_data_fim'])){
+            $ret = $this->venda->getAllSale($dados['rgv_data_inicio'], $dados['rgv_data_fim']);
+        }
+        else{
+            $ret = $this->venda->findAll();
+        }   
 
         $resp = array(
             'data' => array(),
@@ -42,7 +49,8 @@ class Venda extends ResourceController{
                 $resp['data'][$l][] = $opc;
                 $resp['data'][$l][] = getDataBR($obj['rgv_data']);
                 $resp['data'][$l][] = numeroMoeda($obj['rgv_vlr_total']);
-                $resp['data'][$l][] = $obj['rgv_forma_pag'];
+                $resp['data'][$l][] = ucfirst($obj['rgv_forma_pag']);
+                $resp['data'][$l][] = $obj['rgv_fiado'] === 1 ? "Sim" : "Não";
 
                 $l++;
             }
