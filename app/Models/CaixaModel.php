@@ -21,7 +21,6 @@ class CaixaModel extends Model{
 
     public function getInfoCashOpen($cxa_id){
         $this->select("cxa_status, cxa_data_abertura, cxa_data_fechamento");
-        $this->join("registro_venda", "registro_venda.cxa_id = caixa.cxa_id", 'left');
         $this->where('caixa.cxa_id', $cxa_id);
 
         return $this->get()->getRow();
@@ -33,5 +32,13 @@ class CaixaModel extends Model{
         $this->limit(1);
 
         return $this->get()->getRow();
+    }
+
+    public function getAllCash($data_inicial = null, $data_final = null){
+        if(!empty($data_inicial) && !empty($data_final)){
+            $this->where("cxa_data_abertura between '".$data_inicial."' and '".$data_final."'");
+        }
+        $this->orderBy('cxa_id', 'DESC');
+        return $this->get()->getResultArray();
     }
 }

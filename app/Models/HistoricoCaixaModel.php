@@ -69,15 +69,20 @@ class HistoricoCaixaModel extends Model{
 
     public function getTotalInputCash($cxa_id){
         $this->select('sum(hcx_vlr) as total_input');
-        $this->where(['cxa_id' => $cxa_id, 'cxa_status' => 'entrada']);
+        $this->where(['cxa_id' => $cxa_id, 'hcx_tipo' => 'entrada']);
 
         return $this->get()->getRow();
     }
 
     public function getTotalOutputCash($cxa_id){
         $this->select('sum(hcx_vlr) as total_output');
-        $this->where(['cxa_id' => $cxa_id, 'cxa_status' => 'saida']);
+        $this->where(['cxa_id' => $cxa_id, 'hcx_tipo' => 'saida']);
 
         return $this->get()->getRow();
+    }
+
+    public function findHistoryCash($where = array()){
+        $this->where($where);
+        return $this->get()->getResultArray();
     }
 }

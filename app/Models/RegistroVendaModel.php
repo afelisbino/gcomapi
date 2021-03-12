@@ -22,4 +22,8 @@ class RegistroVendaModel extends Model
         $this->where($where);
         return $this->get()->getRow();
     }
+
+    public function getAllSale($data_inicial, $data_final){
+       return $this->where("rgv_data between '".$data_inicial."' and '".$data_final."'")->get()->getResultArray();
+    }
 }
