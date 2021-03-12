@@ -8,6 +8,8 @@ class Historicocaixa extends Migration
 {
 	public function up()
 	{
+		$this->forge->dropTable('registro_saida_caixa', true, true);
+		
 		$this->forge->addField([
 			'hcx_id' => [
 				'type' => 'INT',
@@ -15,7 +17,7 @@ class Historicocaixa extends Migration
 				'auto_increment' => true
 			],
 			'hcx_data' => [
-				'type' => 'datatime',
+				'type' => 'datetime',
 				'null' => false,
 			],
 			'hcx_vlr' => [
@@ -45,7 +47,6 @@ class Historicocaixa extends Migration
 		$this->forge->addForeignKey('cxa_id', 'caixa', 'cxa_id', 'NO ACTION', 'NO ACTION');
 
 		$this->forge->createTable('historico_caixa', 'true', ['ENGINE' => 'InnoDB']);
-		$this->forge->dropTable('registro_saida_caixa', true, true);
 	}
 
 	public function down()
