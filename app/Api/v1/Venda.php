@@ -184,6 +184,7 @@ class Venda extends ResourceController{
                 $resp['data'][$l][] = getDataBR($obj['rgv_data']);
                 $resp['data'][$l][] = numeroMoeda($obj['rgv_vlr_total']);
                 $resp['data'][$l][] = ucfirst($obj['rgv_status']);
+                $resp['data'][$l][] = numeroMoeda($this->venda->getTotalSaleClient($obj['cli_id'])->total_compras);
 
                 $l++;
             }
