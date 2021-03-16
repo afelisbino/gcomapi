@@ -94,15 +94,30 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->group('view', function($routes){
 			$routes->get('today', 'Venda::totalSaleToday');
 		});
+		$routes->group('spun', function($routes){
+			$routes->put('pay', 'Venda::payPayments');
+			$routes->get('list', 'Venda::listSaleSpun');
+		});
 	});
 
 	$routes->group('cash', function($routes){
 		$routes->get('list', 'Caixa::index');
 		$routes->post('open', 'Caixa::open');
 		$routes->put('close', 'Caixa::close');
+		$routes->get('detail', 'Caixa::detailCashToday');
 		$routes->group('view', function($routes){
 			$routes->get('status', 'Caixa::statusCaixa');
 		});
+		$routes->group('history', function($routes){
+			$routes->post('input', 'Caixa::inputCash');
+			$routes->post('output', 'Caixa::outputCash');
+			$routes->get('view', 'Caixa::historicCashHandling');
+		});		
+	});
+
+	$routes->group('client', function($routes){
+		$routes->get('list', 'Cliente::listClient');
+		$routes->post('new', 'Cliente::newClient');
 	});
 });
 
