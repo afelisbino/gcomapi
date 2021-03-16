@@ -7,5 +7,11 @@ use CodeIgniter\Model;
 class ClienteModel extends Model{
     protected $table = "cliente";
     protected $primaryKey = "cli_id";
-    protected $allowedField = ['cli_nome'];
+    protected $allowedFields = ['cli_nome'];
+    protected $returnType = 'array';
+
+    public function getCliente($where = array()){
+        $this->where($where);
+        return $this->get()->getRow();
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Api\v1;
 
 use App\Models\CaixaModel;
+use App\Models\ClienteModel;
 use App\Models\EstoqueModel;
 use App\Models\RegistroVendaModel;
 use App\Models\SaidaProdutoModel;
@@ -16,6 +17,7 @@ class Venda extends ResourceController{
     private $estoque;
     private $caixa;
     private $item;
+    private $cliente;
 
     public function __construct(){
         $this->venda = new RegistroVendaModel();
@@ -31,7 +33,7 @@ class Venda extends ResourceController{
             $ret = $this->venda->getAllSale($dados['rgv_data_inicio'], $dados['rgv_data_fim']);
         }
         else{
-            $ret = $this->venda->findAll();
+            $ret = $this->venda->getAllSale();
         }   
 
         $resp = array(
@@ -50,7 +52,7 @@ class Venda extends ResourceController{
                 $resp['data'][$l][] = getDataBR($obj['rgv_data']);
                 $resp['data'][$l][] = numeroMoeda($obj['rgv_vlr_total']);
                 $resp['data'][$l][] = ucfirst($obj['rgv_forma_pag']);
-                $resp['data'][$l][] = $obj['rgv_fiado'] === 1 ? "Sim" : "Não";
+                $resp['data'][$l][] = $obj['rgv_fiado'] == 1 ? "Sim" : "Não";
 
                 $l++;
             }
@@ -108,14 +110,25 @@ class Venda extends ResourceController{
         $insertSale['rgv_forma_pag'] = $dados->rgv_forma_pag;
         $insertSale['rgv_vlr_total'] = $dados->rgv_vlr_total;
 
-        if(!$dados->rgv_fiado){
+        if($dados->rgv_fiado == false){
             $insertSale['rgv_status'] = 'finalizado';
-            $insertSale['rgv_fiado'] = 0;
+            $insertSale['rgv_fiado'] = $dados->rgv_fiado;
         }
         else{
             $insertSale['rgv_status'] = 'aberto';
-            $insertSale['rgv_fiado'] = 1;
-            $insertSale['cli_id'] = $dados->cli_id;
+            $insertSale['rgv_fiado'] = $dados->rgv_fiado;
+
+            $this->cliente = new ClienteModel();
+
+            $cli = $this->cliente->getCliente(['cli_nome' => ucfirst($dados->cli_nome)]);
+
+            if(empty($cli)){
+                $this->cliente->save(['cli_nome' => lcfirst($dados->cli_nome)]);
+                $insertSale['cli_id'] = $this->cliente->getInsertID();
+            }
+            else{
+                $insertSale['cli_id'] = $cli->cli_id;
+            }
         }
         
         if(!$this->venda->save($insertSale)){
@@ -148,6 +161,35 @@ class Venda extends ResourceController{
         else{
             return $this->respond(['status' => false, 'msg' => 'Nenhuma venda registrada hoje'], 200, "Ok");
         }
+    }
+
+    public function listSaleSpun(){
+        $ret = $this->venda->getAllSpunOpen();
+
+        $resp = array(
+            'data' => array(),
+            'recordsTotal' => count($ret),
+            'recordsFiltered' => count($ret),
+        );
+
+        $l = 0;
+
+        if(!empty($ret)){
+            foreach($ret as $obj){
+                $opc = "<button class='btn btn-success' onclick='pagarCompraFiado({$obj['rgv_id']})' title='Pagar venda'><span class='fas fa-check'></span></button>";
+                $opc .= "<button class='btn btn-primary' onclick='visualizarCompra({$obj['rgv_id']})' title='Visualizar a compra'><span class='fas fa-eye'></span></button>";
+
+                $resp['data'][$l][] = $opc;
+                $resp['data'][$l][] = ucfirst($obj['cli_nome']);
+                $resp['data'][$l][] = getDataBR($obj['rgv_data']);
+                $resp['data'][$l][] = numeroMoeda($obj['rgv_vlr_total']);
+                $resp['data'][$l][] = ucfirst($obj['rgv_status']);
+
+                $l++;
+            }
+        }
+
+        return $this->respond($resp, 200, 'Sucesso');
     }
 
     public function payPayments(){
