@@ -23,7 +23,7 @@ class Database extends Config
 	 *
 	 * @var string
 	 */
-	public $defaultGroup = 'dev';
+	public $defaultGroup = 'production';
 
 	/**
 	 * The default database connection.
@@ -33,9 +33,9 @@ class Database extends Config
 	public $production = [
 		'DSN'      => '',
 		'hostname' => 'localhost',
-		'username' => '',
-		'password' => '',
-		'database' => '',
+		'username' => 'bhbebida',
+		'password' => 'gcom2021',
+		'database' => 'gcom',
 		'DBDriver' => 'MySQLi',
 		'DBPrefix' => '',
 		'pConnect' => false,
