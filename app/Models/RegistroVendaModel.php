@@ -43,4 +43,14 @@ class RegistroVendaModel extends Model
 
         return $this->get()->getResultArray();
     }
+
+    public function getTotalSaleClient($cli_id){
+        $this->select('sum(rgv_vlr_total) as total_compras');
+        $this->where('cli_id', $cli_id);
+        $this->where('rgv_fiado', 1);
+        $this->where('rgv_status', 'aberto');
+        $this->groupBy('cli_id');
+
+        return $this->get()->getRow();
+    }
 }
