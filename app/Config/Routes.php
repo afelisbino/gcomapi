@@ -94,7 +94,10 @@ $routes->group('api', ['namespace' => 'App\Api\v1'], function($routes){
 		$routes->group('view', function($routes){
 			$routes->get('today', 'Venda::totalSaleToday');
 		});
-		$routes->put('pay', 'Venda::payPayments');
+		$routes->group('spun', function($routes){
+			$routes->put('pay', 'Venda::payPayments');
+			$routes->get('list', 'Venda::listSaleSpun');
+		});
 	});
 
 	$routes->group('cash', function($routes){
