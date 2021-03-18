@@ -85,11 +85,11 @@ class Estoque extends ResourceController{
                 return $this->respond(['msg' => 'Produto já possui estoque ativo', 'status' => false]);
             }
             else{
-
                 if($this->estoque->save($dados)){
                     return $this->respondCreated(['status' => true, 'msg' => 'Estoque criado com sucesso'], 'Sucesso');
                 }
                 else{
+                    $this->logging->logSession('estoque', "Erro ao criar o estoque: " . $this->estoque->errors(), 'error');
                     return $this->respond(['msg' => "Erro ao criar estoque desse produto, tente novamente", 'status' => false], 200, 'Ok');
                 }
             }
@@ -115,6 +115,7 @@ class Estoque extends ResourceController{
                     return $this->respondUpdated(['msg' => 'Estoque atualizado', 'status' => true]);
                 }
                 else{
+                    $this->logging->logSession('estoque', "Erro ao atualizar o estoque: " . $this->estoque->errors(), 'error');
                     return $this->respond(['msg' => 'Erro ao atualizar o estoque, tente novamente', 'status' => false], 200, 'Ok');
                 }
             }
@@ -143,6 +144,7 @@ class Estoque extends ResourceController{
                 return $this->respondUpdated($this->estoque->registerStoreOutput($dados['pro_id'], $dados['est_qtd_saida'], $dados['hsp_origem'], $dados['hsp_msg']));
             }
             else{
+                $this->logging->logSession('estoque', "Erro ao registrar saida do estoque: " . $this->estoque->errors(), 'error');
                 return $this->respond(['status' => false, 'msg' => 'Não foi possivel registrar saida do estoque'], 200, 'Ok');
             }
         }

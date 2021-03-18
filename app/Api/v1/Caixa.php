@@ -2,6 +2,7 @@
 
 namespace App\Api\v1;
 
+use App\Libraries\Logging;
 use App\Models\CaixaModel;
 use App\Models\HistoricoCaixaModel;
 use App\Models\RegistroVendaModel;
@@ -14,10 +15,12 @@ class Caixa extends ResourceController{
     private $caixa;
     private $venda;
     private $historico_caixa;
+    private $logging;
 
     public function __construct(){
         $this->caixa = new CaixaModel();
         $this->historico_caixa = new HistoricoCaixaModel();
+        $this->logging = new Logging();
 
         helper('functions_helpers');
     }
@@ -136,6 +139,7 @@ class Caixa extends ResourceController{
                 return $this->respondCreated(['status' => true, 'msg' => 'Caixa aberto com sucesso!']);
             }
             else{
+                $this->logging->logSession('caixa', "Erro ao abrir o caixa: " . $this->caixa->errors(), 'error');
                 return $this->respond(['status' => false, 'msg' => 'Falha ao realizar a abertura'], 200, "Ok");
             }
         }
@@ -159,6 +163,7 @@ class Caixa extends ResourceController{
             return $this->respondUpdated(['status' => true, 'msg' => 'Caixa fechado com sucesso!']);
         }
         else{
+            $this->logging->logSession('caixa', "Erro ao fechar o caixa: " . $this->caixa->errors(), 'error');
             return $this->respond(['status' => false, 'msg' => 'Falha ao realizar o fechamento'], 200, "Ok");
         }
     }

@@ -27,6 +27,7 @@ class Cliente extends ResourceController{
                 return $this->respondCreated(['status' => true, 'msg' => 'Cliente cadastrado com sucesso!']);
             }
             else{
+                $this->logging->logSession('cliente', "Erro ao cadastrar cliente: " . $this->cliente->errors(), 'error');
                 return $this->respond(['status' => false, 'msg' => 'Erro ao cadastrar novo cliente'], 202, 'Ok');
             }
         }

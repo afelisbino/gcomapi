@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Logging;
 use CodeIgniter\Model;
 
 class ProdutoModel extends Model
@@ -18,6 +19,12 @@ class ProdutoModel extends Model
         'cat_id', 
         'frn_id'
     ];
+
+    private $logging;
+
+    public function __construct(){
+        $this->logging = new Logging();
+    }
 
     public function findProduct($where = array()){
 
@@ -43,10 +50,12 @@ class ProdutoModel extends Model
                     return array('msg' => 'Produto cadastrado com sucesso', 'status' => true);
                 }
                 else{
+                    $this->logging->logSession('estoque', "Erro ao iniciar estoque do produto (ID {$estoque['pro_id']}): " . $this->estoque->errors(), 'error');
                     return array('msg' => 'Produto cadastrado com sucesso, sem estoque inicializado', 'status' => true);
                 }
             }
             else{
+                $this->logging->logSession('produto', "Erro ao cadastrar produto: " . $this->errors(), 'error');
                 return array('msg' => 'Produto não cadastrado', 'status' => false);
             }
         }
@@ -64,6 +73,7 @@ class ProdutoModel extends Model
                 return array('msg' => 'Produto alterado com sucesso', 'status' => true);            
             }
             else{
+                $this->logging->logSession('produto', "Erro ao atualizar produto: " . $this->errors(), 'error');
                 return array('msg' => 'Não foi possivel atualizar o produto', 'status' => false);
             }
         }
@@ -87,14 +97,19 @@ class ProdutoModel extends Model
                         return array('msg' => 'Produto deletado com sucesso', 'status' => true);
                     }
                     else{
+                        $this->logging->logSession('produto', "Erro ao excluir produto: " . $this->errors(), 'error');
                         return array('status' => false, 'msg' => 'Erro ao deletar, tente novamente');
                     }
+                }
+                else{
+                    $this->logging->logSession('estoque', "Erro ao excluir estoque do produto (ID {$verify['pro_id']}): " . $this->estoque->errors(), 'error');
                 }
             }
             else if($this->delete($id, false)){
                 return array('msg' => 'Produto deletado com sucesso', 'status' => true);
             }
             else{
+                $this->logging->logSession('produto', "Erro ao excluir produto: " . $this->errors(), 'error');
                 return array('status' => false, 'msg' => 'Erro ao deletar, tente novamente');
             }
         }

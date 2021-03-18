@@ -72,27 +72,21 @@ class Fornecedor extends ResourceController
         if(!isset($dados['frn_nome']) || empty($dados['frn_nome'])){
             return $this->respond(['msg' => 'Informar o nome do fornecedor', 'status' => false], 200, "Não encontrado");
         }
-        else if(!isset($dados['frn_doc']) || empty($dados['frn_doc'])){
-            return $this->respond(['msg' => 'Informar o documento do fornecedor', 'status' => false], 200, "Não encontrado");
-        }
         else{
-
-            $dados['frn_doc'] = cleanDoc($dados['frn_doc']);
-
-            if(validaCnpj($dados['frn_doc'])){
-
-                $ret = $this->fornecedor->saveProvider($dados);
-
-                if($ret['status'] === true){
-                    return $this->respondCreated($ret, 'Sucesso');
-                }
-                else{
-                    return $this->respond($ret, '200', 'OK');
+            if(!empty($dados['frn_doc'])){
+                if(!validaCnpj(cleanDoc($dados['frn_doc']))){
+                    return $this->respond(['msg' => 'Documento não é valido', 'status' => false], 200, "Doc invalido");
                 }
             }
+            
+            $ret = $this->fornecedor->saveProvider($dados);
+
+            if($ret['status'] === true){
+                return $this->respondCreated($ret, 'Sucesso');
+            }
             else{
-                return $this->respond(['msg' => 'Documento não é valido', 'status' => false], 200, "Doc invalido");
-            }            
+                return $this->respond($ret, '200', 'OK');
+            }
         }
     }
 
@@ -102,29 +96,23 @@ class Fornecedor extends ResourceController
         if(!isset($dados['frn_nome']) || empty($dados['frn_nome'])){
             return $this->respond(['msg' => 'Nome do fornecedor não informado', 'status' => false], 200, "Não informado");
         }
-        else if(!isset($dados['frn_doc']) || empty($dados['frn_doc'])){
-            return $this->respond(['msg' => 'Documento do fornecedor não informado', 'status' => false], 200, "Não informado");
-        }
         else if(!isset($dados['frn_id']) || empty($dados['frn_id'])){
             return $this->respond(['msg' => 'Fornecedor não encontrado', 'status' => false], 200, "Não encontrado");
         }
         else{
-
-            $dados['frn_doc'] = cleanDoc($dados['frn_doc']);
-
-            if(validaCnpj($dados['frn_doc'])){
-
-                $ret = $this->fornecedor->updateProvider($dados);
-
-                if($ret['status'] === true){
-                    return $this->respondUpdated($ret, 'Sucesso');
-                }
-                else{
-                    return $this->respond($ret, '200', 'OK');
+            if(!empty($dados['frn_doc'])){
+                if(!validaCnpj(cleanDoc($dados['frn_doc']))){
+                    return $this->respond(['msg' => 'Documento não é valido', 'status' => false], 200, "Doc invalido");
                 }
             }
+
+            $ret = $this->fornecedor->updateProvider($dados);
+
+            if($ret['status'] === true){
+                return $this->respondUpdated($ret, 'Sucesso');
+            }
             else{
-                return $this->respond(['msg' => 'Documento não é valido', 'status' => false], 200, "Doc invalido");
+                return $this->respond($ret, '200', 'OK');
             }
         }
     }
