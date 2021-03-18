@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Logging;
 use CodeIgniter\Model;
 
 class HistoricoCaixaModel extends Model{
@@ -18,9 +19,11 @@ class HistoricoCaixaModel extends Model{
     ];
 
     private $caixa;
+    private $logging;
 
     public function __construct(){
         $this->caixa = new CaixaModel();
+        $this->logging = new Logging();
     }
 
     public function setInputCash($hcx_vlr, $hcx_msg = null){
@@ -41,6 +44,7 @@ class HistoricoCaixaModel extends Model{
             return ['status' => true, 'msg' => 'Entrada registrado com sucesso!'];
         }
         else{
+            $this->logging->logSession('caixa', 'Falha ao registrar entrada do caixa: ' . $this->errors(), 'error');
             return ['status' => false, 'msg' => 'Falha ao registrar entrada de caixa!'];
         }
     }
@@ -63,6 +67,7 @@ class HistoricoCaixaModel extends Model{
             return ['status' => true, 'msg' => 'Saída registrado com sucesso!'];
         }
         else{
+            $this->logging->logSession('caixa', 'Falha ao registrar saida do caixa: ' . $this->errors(), 'error');
             return ['status' => false, 'msg' => 'Falha ao registrar saída de caixa!'];
         }
     }

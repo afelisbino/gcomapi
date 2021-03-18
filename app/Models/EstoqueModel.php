@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Logging;
 use CodeIgniter\Model;
 
 class EstoqueModel extends Model
@@ -16,6 +17,11 @@ class EstoqueModel extends Model
     ];
 
     private $historico_estoque;
+    private $logging;
+
+    public function __construct(){
+        $this->logging = new Logging();
+    }
 
     public function findAllStorage($where = array()){
 
@@ -47,6 +53,7 @@ class EstoqueModel extends Model
                 return ['status' => true, 'msg' => 'Movimentação registrado com sucesso'];
             }
             else{
+                $this->logging->logSession('estoque', 'Erro ao registrar a movimentação de saida: ' . $this->errors());
                 return ['status' => false, 'msg' => 'Erro ao registrar a movimentação'];
             }
         }
@@ -71,6 +78,7 @@ class EstoqueModel extends Model
                 return ['status' => true, 'msg' => 'Movimentação registrado com sucesso'];
             }
             else{
+                $this->logging->logSession('estoque', 'Erro ao registrar a movimentação de entrada: ' . $this->errors());
                 return ['status' => false, 'msg' => 'Erro ao registrar a movimentação'];
             }
         }

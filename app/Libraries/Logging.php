@@ -1,13 +1,6 @@
 <?php
-/**
- * Library para gerar logs
- * User: Emerson Patrik
- * Date: 26/11/2020
- * Time: 03:43:PM
- */
 
 namespace App\Libraries;
-
 
 class Logging
 {
@@ -28,26 +21,29 @@ class Logging
 	{
 		// Caminho da pasta
 		$directory = $this->log_directory . $folder;
-		//var_dump($directory); die;
+
 		$year = date('Y');
 		$month = date('m');
 		$day = date('d');
 
-		//var_dump(mkdir($directory, 0777)); die;
+		// Caminho pasta Log
+		if (!is_dir($this->log_directory)) :
+			mkdir($this->log_directory, 0777, true);
+		endif;
 
 		// Caminho pasta escolhida $folder
 		if (!is_dir($directory)) :
-			mkdir($directory, 0777);
+			mkdir($directory, 0777, true);
 		endif;
 
 		// Caminho pasta ano
 		if (!is_dir($directory . '/' . $year)) :
-			mkdir($directory . '/' . $year, 0777);
+			mkdir($directory . '/' . $year, 0777, true);
 		endif;
 
 		// Caminho pasta ano/mes
 		if (!is_dir($directory . '/' . $year . '/' . $year . '-' . $month)) :
-			mkdir($directory . '/' . $year . '/' . $year . '-' . $month, 0777);
+			mkdir($directory . '/' . $year . '/' . $year . '-' . $month, 0777, true);
 		endif;
 
 		// caminho completo
@@ -81,7 +77,7 @@ class Logging
 
 		$log = fopen($directory . '/DIA-' . $day . ".log", "a+");
 
-		fwrite($log, $mensage);// Escreve
+		fwrite($log, $mensage); // Escreve
 
 		fclose($log); // Fecha o arquivo
 	}

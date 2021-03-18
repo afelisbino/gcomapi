@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Logging;
 use CodeIgniter\Model;
 
 class CategoriaModel extends Model{
@@ -12,6 +13,12 @@ class CategoriaModel extends Model{
     protected $allowedFields = [
         'cat_nome'
     ];
+
+    private $logging;
+
+    public function __construct(){
+        $this->logging = new Logging();
+    }
 
     public function saveCategory($dados){
 
@@ -26,6 +33,7 @@ class CategoriaModel extends Model{
                 return array('status' => true, 'msg' => 'Categoria cadastrada com sucesso');
             }
             else{
+                $this->logging->logSession('categoria', 'Erro ao cadastrar categoria: ' . $this->errors(), 'error');
                 return array('status' => false, 'msg' => 'Erro ao cadastrar, tente novamente');
             }
         }
@@ -44,6 +52,7 @@ class CategoriaModel extends Model{
                 return array('msg' => 'Categoria alterado com sucesso', 'status' => true);
             }
             else{
+                $this->logging->logSession('categoria', 'Erro ao atualizar categoria: ' . $this->errors(), 'error');
                 return array('status' => false, 'msg' => 'Erro ao alterar, tente novamente');
             }
         }
@@ -61,6 +70,7 @@ class CategoriaModel extends Model{
                 return array('msg' => 'Categoria deletado com sucesso', 'status' => true);
             }
             else{
+                $this->logging->logSession('categoria', 'Erro ao excluir categoria: ' . $this->errors(), 'error');
                 return array('status' => false, 'msg' => 'Erro ao deletar, tente novamente');
             }
         }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Libraries\Logging;
 use CodeIgniter\Model;
 
 class FornecedorModel extends Model{
@@ -13,6 +14,12 @@ class FornecedorModel extends Model{
         'frn_nome',
         'frn_doc'
     ];
+
+    private $logging;
+
+    public function __construct(){
+        $this->logging = new Logging();
+    }
 
     public function saveProvider($dados){
 
@@ -26,6 +33,7 @@ class FornecedorModel extends Model{
                 return array('status' => true, 'msg' => 'Fornecedor cadastrado com sucesso');
             }
             else{
+                $this->logging->logSession('fornecedor', 'Erro ao cadastrar fornecedor: ' . $this->errors(), 'error');
                 return array('status' => false, 'msg' => 'Erro ao cadastrar, tente novamente');
             }
         }
@@ -45,6 +53,7 @@ class FornecedorModel extends Model{
                     return array('msg' => 'Fornecedor alterado com sucesso', 'status' => true);
                 }
                 else{
+                    $this->logging->logSession('fornecedor', 'Erro ao atualizar fornecedor: ' . $this->errors(), 'error');
                     return array('status' => false, 'msg' => 'Erro ao alterar, tente novamente');
                 }
             }
@@ -63,6 +72,7 @@ class FornecedorModel extends Model{
         }
         else{
             if($this->delete($id, false)){
+                $this->logging->logSession('fornecedor', 'Erro ao excluir fornecedor: ' . $this->errors(), 'error');
                 return array('msg' => 'Fornecedor deletado com sucesso', 'status' => true);
             }
             else{

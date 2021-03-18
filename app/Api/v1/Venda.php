@@ -2,6 +2,7 @@
 
 namespace App\Api\v1;
 
+use App\Libraries\Logging;
 use App\Models\CaixaModel;
 use App\Models\ClienteModel;
 use App\Models\EstoqueModel;
@@ -18,10 +19,12 @@ class Venda extends ResourceController{
     private $caixa;
     private $item;
     private $cliente;
+    private $logging;
 
     public function __construct(){
         $this->venda = new RegistroVendaModel();
         $this->item = new SaidaProdutoModel();
+        $this->logging = new Logging();
 
         helper('functions_helpers');
     }
@@ -123,8 +126,13 @@ class Venda extends ResourceController{
             $cli = $this->cliente->getCliente(['cli_nome' => ucfirst($dados->cli_nome)]);
 
             if(empty($cli)){
-                $this->cliente->save(['cli_nome' => lcfirst($dados->cli_nome)]);
-                $insertSale['cli_id'] = $this->cliente->getInsertID();
+                if($this->cliente->save(['cli_nome' => lcfirst($dados->cli_nome)])){
+                    $insertSale['cli_id'] = $this->cliente->getInsertID();
+                }
+                else{
+                    $this->logging->logSession('cliente', "Erro ao cadastrar cliente: " . $this->cliente->errors(), 'error');
+                }
+                
             }
             else{
                 $insertSale['cli_id'] = $cli->cli_id;
@@ -132,6 +140,7 @@ class Venda extends ResourceController{
         }
         
         if(!$this->venda->save($insertSale)){
+            $this->logging->logSession('venda', "Erro ao salvar nova venda: " . $this->venda->errors(), 'error');
             return $this->respond(['status' => false, 'msg' => "Falha ao salvar a compra, entre em contato com o desenvolvedor!"], 200, "Ok");
         }
         
@@ -146,7 +155,7 @@ class Venda extends ResourceController{
 
             $this->estoque->registerStoreOutput($obj->pro_id, $obj->spr_qtd, "Venda");
 
-            $this->item->save($insertIten);
+            if(!$this->item->save($insertIten)) $this->logging->logSession('venda', "Erro ao salvar itens da venda(ID {$rgv_id}) : " . $this->item->errors(), 'error');
         }
 
         return $this->respondCreated(['status' => true, 'msg' => 'Compra registrada com sucesso!']);
@@ -215,6 +224,7 @@ class Venda extends ResourceController{
                 return $this->respondUpdated(['status' => true, 'msg' => "Venda paga com sucesso"]);
             }
             else{
+                $this->logging->logSession('venda', "Erro ao finalizar venda fiado (ID {$dados['rgv_id']}) : " . $this->venda->errors(), 'error');
                 return $this->respond(['status' => false, 'msg' => "Erro ao finalizar venda"], 202, "Ok");
             }
         }

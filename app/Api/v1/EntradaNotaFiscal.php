@@ -2,10 +2,10 @@
 
 namespace App\Api\v1;
 
+use App\Libraries\Logging;
 use App\Models\EntradaProdutoDetalheModel;
 use App\Models\EntradaProdutoModel;
 use App\Models\EstoqueModel;
-use App\Models\FornecedorModel;
 use App\Models\ProdutoModel;
 use CodeIgniter\RESTful\ResourceController;
 
@@ -16,12 +16,13 @@ class EntradaNotaFiscal extends ResourceController{
     private $entrada_produto;
     private $entrada_produto_detalhe;
     private $estoque;
-    private $fornecedor;
     private $produto;
+    private $logging;
 
     public function __construct(){
         helper('functions_helpers');
 
+        $this->logging = new Logging();
         $this->entrada_produto = new EntradaProdutoModel();
         $this->entrada_produto_detalhe = new EntradaProdutoDetalheModel();
     }
@@ -56,17 +57,21 @@ class EntradaNotaFiscal extends ResourceController{
     }
 
     public function newNf(){
+
         $dados = $this->request->getJSON();
 
         $this->estoque = new EstoqueModel();
         $this->produto = new ProdutoModel();
-        
+
         $nf['epr_nfs_numero'] = $dados->epr_nfs_numero;
         $nf['epr_vlr_nota'] = numeroFloat($dados->epr_vlr_nota);
         $nf['epr_data_cadastro'] =  date('Y-m-d H:i:s');
         $nf['frn_id'] = $dados->frn_id;
 
-        $this->entrada_produto->save($nf);
+        if(!$this->entrada_produto->save($nf)){
+            $this->logging->logSession('entrada_nota', 'Erro ao cadastrar entrada de nota fiscal: ' . $this->entrada_produto->errors(), "error");
+            return $this->respond(['status' => false, 'msg' => 'Erro ao cadastrar nota fiscal, tente novamente'], 200, 'Sucesso');
+        }
 
         $epr_id = $this->entrada_produto->getInsertID();
         $total_produtos = 0;
@@ -81,7 +86,9 @@ class EntradaNotaFiscal extends ResourceController{
                 $nfp['epd_qtd_entrada'] = $obj->epd_qtd_entrada;
                 $nfp['epd_vlr_compra'] = numeroFloat($obj->epd_vlr_compra);
 
-                $this->entrada_produto_detalhe->save($nfp);
+                if(!$this->entrada_produto_detalhe->save($nfp)){
+                    $this->logging->logSession('entrada_nota', "Erro ao dar entrada (ID:{$epr_id}) no produto (ID:{$produto->pro_id}): " . $this->entrada_produto_detalhe->errors(), "error");
+                }
 
                 $this->estoque->registerStoreInput($produto->pro_id, $obj->epd_qtd_entrada, "Entrada nota fiscal");
 
@@ -96,6 +103,7 @@ class EntradaNotaFiscal extends ResourceController{
             return $this->respondCreated(['status' => true, 'msg' => 'Entrada de nota fiscal cadastrada com sucesso'], 'Sucesso');
         }
         else{
+            $this->logging->logSession('entrada_nota', 'Erro ao finalizar entrada de nota fiscal: ' . $this->entrada_produto->errors(), "error");
             return $this->respond(['status' => false, 'msg' => 'Erro ao cadastrar nota fiscal, tente novamente'], 200, 'Sucesso');
         }
     }
