@@ -16,15 +16,12 @@ class ProdutoModel extends Model
         'pro_codigo', 
         'pro_nome', 
         'pro_valor_venda', 
+        'pro_foto',
         'cat_id', 
         'frn_id'
     ];
 
     private $logging;
-
-    public function __construct(){
-        $this->logging = new Logging();
-    }
 
     public function findProduct($where = array()){
 
@@ -34,7 +31,7 @@ class ProdutoModel extends Model
     }
 
     public function saveProduct($dados){
-
+        $this->logging = new Logging();
         $verify = $this->where('pro_codigo', $dados['pro_codigo'])->get()->getRow();
 
         if(empty($verify)){
@@ -65,6 +62,7 @@ class ProdutoModel extends Model
     }
 
     public function updateProduct($dados){
+        $this->logging = new Logging();
         $verify = $this->find($dados['pro_id']);
 
         if(!empty($verify)){
@@ -83,7 +81,7 @@ class ProdutoModel extends Model
     }
 
     public function deleteProduct($id){
-
+        $this->logging = new Logging();
         $this->estoque = new EstoqueModel();
 
         $verify = $this->find($id);

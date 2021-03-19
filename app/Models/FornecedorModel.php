@@ -17,12 +17,9 @@ class FornecedorModel extends Model{
 
     private $logging;
 
-    public function __construct(){
-        $this->logging = new Logging();
-    }
-
     public function saveProvider($dados){
 
+        $this->logging = new Logging();
         $verify = $this->where('frn_doc', $dados['frn_doc'])->get()->getRow();
 
         if(!empty($verify)){
@@ -41,6 +38,7 @@ class FornecedorModel extends Model{
 
     public function updateProvider($dados){
 
+        $this->logging = new Logging();
         $verify = $this->find($dados['frn_id']);
 
         if(empty($verify)){
@@ -65,6 +63,7 @@ class FornecedorModel extends Model{
 
     public function deleteProvider($id){
 
+        $this->logging = new Logging();
         $verify = $this->find($id);
 
         if(empty($verify)){
