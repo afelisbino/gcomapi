@@ -94,7 +94,7 @@ if (!function_exists('validateCPF')) :
         }
 
         // Elimina possivel mascara
-        $cpf = clean($cpf);
+        $cpf = cleanDoc($cpf);
 
         // Verifica se o numero de digitos informados é igual a 11
         if (strlen($cpf) != 11) {
