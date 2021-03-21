@@ -27,6 +27,7 @@ class ProdutoModel extends Model
 
         return $this->join('categoria', 'categoria.cat_id = produto.cat_id')
             ->join('fornecedor', 'fornecedor.frn_id = produto.frn_id')
+            ->join('estoque', 'estoque.pro_id = produto.pro_id', 'left')
             ->where($where)->get()->getRow();
     }
 
@@ -79,18 +80,18 @@ class ProdutoModel extends Model
 
                 $this->estoque = new EstoqueModel();
 
-                $estoquePro = $this->estoque->findStorage(['pro_id' => $dados['pro_id']]);
+                $estoquePro = $this->estoque->findStorage(['produto.pro_id' => $dados['pro_id']]);
                 
                 if(!empty($estoquePro)){
                     $estoque['pro_id'] = $dados['pro_id'];
-                    $estoque['est_id'] = $estoquePro['est_id'];
+                    $estoque['est_id'] = $estoquePro->est_id;
                     $estoque['est_qtd_atual'] = $dados['est_qtd_atual'];
 
                     if($this->estoque->save($estoque)) {
                         return array('msg' => 'Produto alterado com sucesso', 'status' => true);
                     }
                     else{
-                        $this->logging->logSession('produto', "Erro ao atualizar produto: " . $this->estoque->errors(), 'error');
+                        $this->logging->logSession('estoque', "Erro ao atualizar produto: " . $this->estoque->errors(), 'error');
                         return array('msg' => 'Não foi possivel atualizar o produto', 'status' => false);
                     } 
                 }
@@ -103,7 +104,7 @@ class ProdutoModel extends Model
                         return array('msg' => 'Produto alterado com sucesso', 'status' => true);
                     }
                     else{
-                        $this->logging->logSession('produto', "Erro ao atualizar produto: " . $this->estoque->errors(), 'error');
+                        $this->logging->logSession('estoque', "Erro ao atualizar produto: " . $this->estoque->errors(), 'error');
                         return array('msg' => 'Não foi possivel atualizar o produto', 'status' => false);
                     } 
                 }
