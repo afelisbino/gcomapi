@@ -32,14 +32,23 @@ class ProdutoModel extends Model
 
     public function saveProduct($dados){
         $this->logging = new Logging();
-        $verify = $this->where('pro_codigo', $dados['pro_codigo'])->get()->getRow();
+        
+        if(empty($dados['pro_codigo'])){
+            $this->where('pro_nome', $dados['pro_nome']);
+            $dados['pro_codigo'] = null;
+        }
+        else{
+            $this->where('pro_codigo', $dados['pro_codigo']);
+        }
+
+        $verify = $this->get()->getRow();
 
         if(empty($verify)){
             if($this->save($dados)){
 
                 $this->estoque = new EstoqueModel();
-    
-                $estoque['est_qtd_atual'] = 0;
+
+                $estoque['est_qtd_atual'] = $dados['est_qtd_atual'];
                 $estoque['est_qtd_minimo'] = 0;
                 $estoque['pro_id'] = $this->getInsertID();
     
@@ -67,7 +76,38 @@ class ProdutoModel extends Model
 
         if(!empty($verify)){
             if($this->save($dados)){
-                    
+
+                $this->estoque = new EstoqueModel();
+
+                $estoquePro = $this->estoque->findStorage(['pro_id' => $dados['pro_id']]);
+                
+                if(!empty($estoquePro)){
+                    $estoque['pro_id'] = $dados['pro_id'];
+                    $estoque['est_id'] = $estoquePro['est_id'];
+                    $estoque['est_qtd_atual'] = $dados['est_qtd_atual'];
+
+                    if($this->estoque->save($estoque)) {
+                        return array('msg' => 'Produto alterado com sucesso', 'status' => true);
+                    }
+                    else{
+                        $this->logging->logSession('produto', "Erro ao atualizar produto: " . $this->estoque->errors(), 'error');
+                        return array('msg' => 'Não foi possivel atualizar o produto', 'status' => false);
+                    } 
+                }
+                else{
+                    $estoque['pro_id'] = $dados['pro_id'];
+                    $estoque['est_qtd_atual'] = $dados['est_qtd_atual'];
+                    $estoque['est_qtd_minimo'] = 0;
+
+                    if($this->estoque->save($estoque)) {
+                        return array('msg' => 'Produto alterado com sucesso', 'status' => true);
+                    }
+                    else{
+                        $this->logging->logSession('produto', "Erro ao atualizar produto: " . $this->estoque->errors(), 'error');
+                        return array('msg' => 'Não foi possivel atualizar o produto', 'status' => false);
+                    } 
+                }
+
                 return array('msg' => 'Produto alterado com sucesso', 'status' => true);            
             }
             else{
@@ -87,7 +127,7 @@ class ProdutoModel extends Model
         $verify = $this->find($id);
 
         if(!empty($verify)){
-            $estoque = $this->estoque->findStorage(['pro_id' => $verify['pro_id']]);
+            $estoque = $this->estoque->findStorage(['produto.pro_id' => $verify['pro_id']]);
 
             if(!empty($estoque)){
                 if($this->estoque->delete($estoque->est_id, false)){
