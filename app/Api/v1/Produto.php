@@ -150,10 +150,10 @@ class Produto extends ResourceController{
             return $this->respond(['msg' => 'Produto não encotrado', 'status' => false], 200, "Não encontrado");
         }
         else{
-            $ret = $this->produto->findProduct(['pro_id' => $dados['pro_id']]);
+            $ret = $this->produto->findProduct(['produto.pro_id' => $dados['pro_id']]);
 
             if(empty($ret)){
-                return $this->respond(['msg' => 'Produto não encotrado', 'status' => false], 200, "Não encontrado");
+                return $this->respond(['msg' => 'Produto não encontrado', 'status' => false], 200, "Não encontrado");
             }
             else{
                 return $this->respond($ret, 200, "Ok");
@@ -168,10 +168,10 @@ class Produto extends ResourceController{
             return $this->respond(['msg' => 'Produto não encotrado', 'status' => false], 200, "Não encontrado");
         }
         else{
-            $ret = $this->produto->findProduct(['pro_codigo' => $dados['barcode']]);
+            $ret = $this->produto->findProduct(['produto.pro_codigo' => $dados['barcode']]);
 
             if(empty($ret)){
-                return $this->respond(['msg' => 'Produto não encotrado', 'status' => false], 200, "Não encontrado");
+                return $this->respond(['msg' => 'Produto não encontrado', 'status' => false], 200, "Não encontrado");
             }
             else{
                 return $this->respond($ret, 200, "Ok");
