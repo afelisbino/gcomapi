@@ -61,6 +61,7 @@ $routes->group('api', function($routes){
 		$routes->group('product', function($routes){
 			$routes->post('new', 'Produto::newProduct');
 			$routes->get('list', 'Produto::index');
+			$routes->get('all', 'Produto::listAllProduct');
 			$routes->put('update', 'Produto::updateProduct');
 			$routes->delete('delete', 'Produto::deleteProduct');
 			$routes->group('search', function($routes){

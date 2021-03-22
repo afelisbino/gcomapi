@@ -178,4 +178,10 @@ class Produto extends ResourceController{
             }
         }
     }
+
+    public function listAllProduct(){
+        $ret = $this->produto->findAll();
+
+        return $this->respond($ret, 200, "Ok");
+    }
 }
