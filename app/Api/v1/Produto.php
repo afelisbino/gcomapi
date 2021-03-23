@@ -77,8 +77,6 @@ class Produto extends ResourceController{
         }
         else{
 
-            $dados['pro_valor_venda'] = numeroFloat($dados['pro_valor_venda']);
-
             $ret = $this->produto->saveProduct($dados);
             
             if($ret['status'] == true){
