@@ -8,14 +8,7 @@ class Foreigncaixa extends Migration
 {
 	public function up()
 	{
-		$this->forge->addColumn('registro_venda', [
-			'cxa_id' => [
-				'type' => 'int',
-				'null' => false
-			]
-		]);
-
-		$this->forge->modifyColumn('registro_caixa', ['CONSTRAINT fk_registro_venda_caixa1 FOREIGN KEY(cxa_id) REFERENCES table(caixa)']);
+		$this->forge->addForeignKey('cxa_id', 'registro_venda', 'cxa_id', 'CASCADE', 'CASCADE');
 	}
 
 	public function down()

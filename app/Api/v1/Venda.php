@@ -50,6 +50,7 @@ class Venda extends ResourceController{
         if(!empty($ret)){
             foreach($ret as $obj){
                 $opc = "<button class='btn btn-primary' onclick='buscarItens({$obj['rgv_id']})' title='Visualizar itens'><span class='fas fa-eye'></span></button>";
+                $opc .= "<button class='btn btn-danger' onclick='excluirVenda({$obj['rgv_id']})' title='Excluir venda'><span class='fas fa-trash'></span></button>";
 
                 $resp['data'][$l][] = $opc;
                 $resp['data'][$l][] = getDataBR($obj['rgv_data']);
@@ -230,6 +231,21 @@ class Venda extends ResourceController{
         }
         else{
             return $this->respond(['status' => false, 'msg' => "Venda já se encontra finalizado"], 202, "Ok");
+        }
+    }
+
+    public function deleteSale(){
+        $rgv_id = $this->request->getRawInput('rgv_id');
+
+        if(empty($rgv_id)){
+            return $this->respond(['status' => false, 'msg' => 'Venda não localizada!'], 400, "Erro");
+        }
+
+        if($this->venda->delete($rgv_id, false)){
+            return $this->respondCreated(['status' => true, 'msg' => 'Venda excluida com sucesso!'], "Sucesso");
+        }
+        else{
+            return $this->respond(['status' => false, 'msg' => 'Falha ao excluir venda!'], 400, "Erro");
         }
     }
 }
