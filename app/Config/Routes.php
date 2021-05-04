@@ -93,6 +93,7 @@ $routes->group('api', function($routes){
 			$routes->get('list', 'Venda::index');
 			$routes->get('find', 'Venda::findDetailSale');
 			$routes->post('new', 'Venda::newSale');
+			$routes->delete('delete', 'Venda::deleteSale');
 			$routes->group('view', function($routes){
 				$routes->get('today', 'Venda::totalSaleToday');
 			});
@@ -126,7 +127,7 @@ $routes->group('api', function($routes){
 	$routes->group('v2', ['namespace' => 'App\Api\v2'], function($routes){
 		$routes->group('product', function($routes){
 			$routes->post('new', 'Produto::newProduct');
-			$routes->put('update', 'Produto::updateProduct');
+			$routes->post('update', 'Produto::updateProduct');
 		});
 	});
 });

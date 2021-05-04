@@ -34,7 +34,12 @@ class TableRegistroVenda extends Migration
 				'null' => false,
 				'constraint' => ['aberto', 'finalizado'],
 				'default' => 'aberto'
+			],
+			'cxa_id' => [
+				'type' => 'int',
+				'null' => false,
 			]
+
 		]);
 
 		$this->forge->addPrimaryKey('rgv_id');
